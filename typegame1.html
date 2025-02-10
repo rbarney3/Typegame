@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Typing Practice Game</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f4f4f9;
+            padding: 20px;
+        }
+        h1 {
+            color: #333;
+        }
+        #word {
+            font-size: 50px;
+            font-weight: bold;
+            margin: 20px 0;
+            color: #1e88e5;
+        }
+        #input {
+            font-size: 20px;
+            padding: 10px;
+            width: 80%;
+            max-width: 300px;
+            text-align: center;
+            border: 2px solid #1e88e5;
+            border-radius: 5px;
+        }
+        #feedback {
+            font-size: 20px;
+            margin-top: 15px;
+        }
+        .correct {
+            color: green;
+        }
+        .wrong {
+            color: red;
+        }
+        #timer {
+            font-size: 22px;
+            margin-top: 20px;
+        }
+        #score {
+            font-size: 22px;
+            font-weight: bold;
+        }
+        #start {
+            font-size: 18px;
+            padding: 10px 15px;
+            margin-top: 20px;
+            cursor: pointer;
+            background-color: #ff9800;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Typing Practice Game</h1>
+    <p>Type the word shown below as fast as you can!</p>
+
+    <div id="word">Press Start</div>
+    <input type="text" id="input" disabled autocomplete="off">
+    <p id="feedback"></p>
+
+    <p id="timer">Time Left: 30s</p>
+    <p id="score">Score: 0</p>
+    <button id="start">Start Game</button>
+
+    <script>
+        const words = ["apple", "banana", "elephant", "giraffe", "tiger", "zebra", "ocean", "mountain", "sunshine", "rainbow"];
+        let currentWord = "";
+        let score = 0;
+        let timeLeft = 30;
+        let timer;
+        const wordDisplay = document.getElementById("word");
+        const inputField = document.getElementById("input");
+        const feedback = document.getElementById("feedback");
+        const timerDisplay = document.getElementById("timer");
+        const scoreDisplay = document.getElementById("score");
+        const startButton = document.getElementById("start");
+
+        function startGame() {
+            score = 0;
+            timeLeft = 30;
+            inputField.disabled = false;
+            inputField.value = "";
+            feedback.textContent = "";
+            scoreDisplay.textContent = "Score: 0";
+            startButton.disabled = true;
+            inputField.focus(); // Ensure input field gets focus (for iPad)
+            nextWord();
+            timer = setInterval(updateTimer, 1000);
+
+            // Ensure keyboard pops up on iPad
+            setTimeout(() => {
+                inputField.scrollIntoView({ behavior: 'smooth' });
+            }, 300);
+        }
+
+        function nextWord() {
+            currentWord = words[Math.floor(Math.random() * words.length)];
+            wordDisplay.textContent = currentWord;
+            inputField.value = "";
+        }
+
+        function checkInput() {
+            if (inputField.value === currentWord) {
+                feedback.textContent = "Correct!";
+                feedback.className = "correct";
+                score++;
+                scoreDisplay.textContent = "Score: " + score;
+                nextWord();
+            } else if (!currentWord.startsWith(inputField.value)) {
+                feedback.textContent = "Wrong! Try again.";
+                feedback.className = "wrong";
+            } else {
+                feedback.textContent = "";
+            }
+        }
+
+        function updateTimer() {
+            timeLeft--;
+            timerDisplay.textContent = "Time Left: " + timeLeft + "s";
+
+            if (timeLeft <= 0) {
+                clearInterval(timer);
+                inputField.disabled = true;
+                startButton.disabled = false;
+                wordDisplay.textContent = "Game Over!";
+                feedback.textContent = "Your final score is " + score;
+            }
+        }
+
+        inputField.addEventListener("input", checkInput);
+        startButton.addEventListener("click", startGame);
+    </script>
+
+</body>
+</html>
